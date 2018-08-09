@@ -3,10 +3,10 @@
     <el-form class="login-form" :model="formData" label-position="top" label-width="80px">
       <h2>用户登录</h2>
       <el-form-item label="用户名">
-        <el-input v-model="formData.username"></el-input>
+        <el-input @keyup.enter.native="handleLogin" v-model="formData.username"></el-input>
       </el-form-item>
       <el-form-item label="密码">
-        <el-input v-model="formData.password"></el-input>
+        <el-input @keyup.enter.native="handleLogin" v-model="formData.password"></el-input>
       </el-form-item>
       <el-button @click="handleLogin" class="loginBtn" type="primary">登录</el-button>
     </el-form>
