@@ -1,23 +1,44 @@
 <template>
   <div class="login-wrap">
-    <el-form class="login-form" label-position="top" label-width="80px">
+    <el-form class="login-form" :model="formData" label-position="top" label-width="80px">
       <h2>用户登录</h2>
       <el-form-item label="用户名">
-        <el-input></el-input>
+        <el-input v-model="formData.username"></el-input>
       </el-form-item>
       <el-form-item label="密码">
-        <el-input></el-input>
+        <el-input v-model="formData.password"></el-input>
       </el-form-item>
-      <el-button class="loginBtn" type="primary">登录</el-button>
+      <el-button @click="handleLogin" class="loginBtn" type="primary">登录</el-button>
     </el-form>
   </div>
 </template>
 
 <script>
+import axios from 'axios';
 export default {
   data() {
     return {
+      formData:{
+        username:'',
+        password:''
+      }
     };
+  },
+  methods:{
+    async handleLogin(){
+      var response = await axios.post
+      ('http://localhost:8888/api/private/v1/login',this.formData);
+      var status = response.data.meta.status;
+      var msg = response.data.meta.msg;
+      if (status === 200) {
+        this.$message.success(msg);
+        var token = response.data.data.token;
+        sessionStorage.setItem('token',token);
+        // 跳转到home页面  暂时不写
+      } else {
+        this.$message.error(msg);
+      }
+    }
   }
 };
 </script>
