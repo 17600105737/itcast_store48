@@ -94,15 +94,15 @@
 
 <script>
 export default {
-  beforeCreate(){
+  beforeCreate() {
     var token = sessionStorage.getItem('token');
     if (!token) {
       this.$message.warning('请先登录');
       this.$router.push('/login');
     }
   },
-  methods:{
-    handelLogout(){
+  methods: {
+    handelLogout() {
       this.$message.success('退出成功');
       sessionStorage.clear();
       this.$router.push('/login');
@@ -112,32 +112,32 @@ export default {
 </script>
 
 <style>
-  .container {
-    height: 100%;
-  }
-  .header {
-    background-color: #b3c0d1;
-  }
-  .header .title {
-    color: #ffffff;
-    font-size: 24px;
-    text-align: center;
-    line-height: 60px;
-  }
-  .header .logout {
-    font-size: 16px;
-    line-height: 60px;
-  }
-  .header a {
-    display: block;
-    text-decoration: none;
-    text-align: center;
-    color: orange;
-  }
-  .aside {
-    background-color: #d3dce6;
-  }
-  .main {
-    background-color: #e9eef3;
-  }
+.container {
+  height: 100%;
+}
+.header {
+  background-color: #b3c0d1;
+}
+.header .title {
+  color: #ffffff;
+  font-size: 24px;
+  text-align: center;
+  line-height: 60px;
+}
+.header .logout {
+  font-size: 16px;
+  line-height: 60px;
+}
+.header a {
+  display: block;
+  text-decoration: none;
+  text-align: center;
+  color: orange;
+}
+.aside {
+  background-color: #d3dce6;
+}
+.main {
+  background-color: #e9eef3;
+}
 </style>

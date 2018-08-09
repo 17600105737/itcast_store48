@@ -9,13 +9,13 @@ Vue.use(Router);
 // 配置路由规则
 export default new Router({
   routes: [
-    { name: 'login', path: '/login', component: Login},
-    { 
+    { name: 'login', path: '/login', component: Login },
+    {
       name: 'home',
       path: '/',
       component: Home,
-      children:[
-        { name: 'users', path: '/users', component: Users}
+      children: [
+        { name: 'users', path: '/users', component: Users }
       ]
     }
   ]

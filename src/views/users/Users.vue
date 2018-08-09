@@ -37,13 +37,24 @@
         label="电话">
       </el-table-column>
       <el-table-column
-        prop="address"
         label="用户状态"
         width="80">
+        <template slot-scope="scope">
+          <el-switch
+            v-model="scope.row.mg_state"
+            active-color="#13ce66"
+            inactive-color="#ff4949">
+          </el-switch>
+        </template>
       </el-table-column>
       <el-table-column
         prop="address"
         label="操作">
+        <template slot-scope="scope">
+          <el-button type="primary" icon="el-icon-edit" plain size="mini"></el-button>
+          <el-button type="warning" icon="el-icon-check" plain size="mini"></el-button>
+          <el-button type="danger" icon="el-icon-delete" plain size="mini"></el-button>
+        </template>
       </el-table-column>
     </el-table>
   </el-card>
@@ -52,23 +63,24 @@
 <script>
 import axios from 'axios';
 export default {
-  data(){
+  data() {
     return {
-      data:[]
-    }
+      data: []
+    };
   },
-  created(){
-    this.loadData()
+  created() {
+    this.loadData();
   },
-  methods:{
-    async loadData(){
+  methods: {
+    async loadData() {
       // 发送请求的时候，要在请求头中添加Authorization=token
       var token = sessionStorage.getItem('token');
       axios.defaults.headers.common['Authorization'] = token;
 
-      var response = await axios.get
-      ('http://localhost:8888/api/private/v1/users?pagenum=1&pagesize=10');
-      var { meta:{status,msg}} = response.data;
+      var response = await axios.get(
+        'http://localhost:8888/api/private/v1/users?pagenum=1&pagesize=10'
+      );
+      var { meta: { status, msg } } = response.data;
       if (status === 200) {
         this.data = response.data.data.users;
       } else {
@@ -76,7 +88,7 @@ export default {
       }
     }
   }
-}
+};
 </script>
 
 <style>
