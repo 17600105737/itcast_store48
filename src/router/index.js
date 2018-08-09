@@ -3,7 +3,7 @@ import Router from 'vue-router';
 
 import Login from '@/views/Login';
 import Home from '@/views/Home';
-import Users from '@/views/Users/Users';
+import Users from '@/views/users/Users';
 Vue.use(Router);
 
 // 配置路由规则

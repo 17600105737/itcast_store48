@@ -1,6 +1,18 @@
 <template>
-  <el-card class="box-card">
-    hahah
+  <el-card class="card">
+    <el-breadcrumb separator-class="el-icon-arrow-right">
+      <el-breadcrumb-item :to="{ path: '/' }">首页</el-breadcrumb-item>
+      <el-breadcrumb-item>用户管理</el-breadcrumb-item>
+      <el-breadcrumb-item>用户列表</el-breadcrumb-item>
+    </el-breadcrumb>
+    <el-row class="searchRow">
+      <el-col :span="24">
+        <el-input clearable placeholder="请输入内容" class="searchInput">
+          <el-button slot="append" icon="el-icon-search"></el-button>
+        </el-input>
+        <el-button type="success" plain>成功按钮</el-button>
+      </el-col>
+    </el-row>
   </el-card>
 </template>
 
@@ -11,4 +23,14 @@ export default {
 </script>
 
 <style>
+.card {
+  height: 100%;
+}
+.searchInput {
+  width: 300px;
+}
+.searchRow {
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
 </style>
