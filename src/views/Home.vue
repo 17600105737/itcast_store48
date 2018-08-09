@@ -9,7 +9,7 @@
           <div class="title">电商后台管理系统</div>
         </el-col>
         <el-col :span="1">
-          <a class="logout" href="">退出</a>
+          <a @click.prevent="handelLogout" class="logout" href="">退出</a>
         </el-col>
       </el-row>
     </el-header>
@@ -91,7 +91,22 @@
 </template>
 
 <script>
-export default {};
+export default {
+  beforeCreate(){
+    var token = sessionStorage.getItem('token');
+    if (!token) {
+      this.$message.warning('请先登录');
+      this.$router.push('/login');
+    }
+  },
+  methods:{
+    handelLogout(){
+      this.$message.success('退出成功');
+      sessionStorage.clear();
+      this.$router.push('/login');
+    }
+  }
+};
 </script>
 
 <style>

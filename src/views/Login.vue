@@ -34,7 +34,7 @@ export default {
         this.$message.success(msg);
         var token = response.data.data.token;
         sessionStorage.setItem('token',token);
-        // 跳转到home页面  暂时不写
+        this.$router.push('/');
       } else {
         this.$message.error(msg);
       }
