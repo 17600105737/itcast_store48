@@ -3,7 +3,11 @@
 import Vue from 'vue';
 import App from './App';
 import router from './router';
-
+// 导入elementUI包
+import ElementUI from 'element-ui';
+import 'element-ui/lib/theme-chalk/index.css';
+// 注册EUI
+Vue.use(ElementUI);
 Vue.config.productionTip = false;
 
 /* eslint-disable no-new */
