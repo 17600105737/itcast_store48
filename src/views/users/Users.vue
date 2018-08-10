@@ -15,12 +15,14 @@
         <el-dialog title="添加用户" :visible.sync="addDialogFormVisible">
           <el-form
           :model="form"
+          :rules="rules"
+          ref="addForm"
           label-width="80px"
           >
-            <el-form-item label="用户名">
+            <el-form-item label="用户名" prop="username">
               <el-input v-model="form.username" auto-complete="off"></el-input>
             </el-form-item>
-            <el-form-item label="密码">
+            <el-form-item label="密码" prop="password">
               <el-input v-model="form.password" auto-complete="off"></el-input>
             </el-form-item>
             <el-form-item label="邮箱">
@@ -32,7 +34,7 @@
           </el-form>
           <div slot="footer" class="dialog-footer">
             <el-button @click="addDialogFormVisible = false">取 消</el-button>
-            <el-button type="primary" @click="addDialogFormVisible = false">确 定</el-button>
+            <el-button type="primary" @click="handleUserAdd">确 定</el-button>
           </div>
         </el-dialog>
       </el-col>
@@ -113,6 +115,16 @@ export default {
         password: '',
         email: '',
         mobile: ''
+      },
+      rules: {
+        username: [
+          { required: true, message: '用户名不能为空', trigger: 'blur' },
+          { min: 3, max: 6, message: '长度在 3 到 6 个字符', trigger: 'blur' }
+        ],
+        password: [
+          { required: true, message: '密码不能为空', trigger: 'blur' },
+          { min: 3, max: 11, message: '长度在 3 到 11 个字符', trigger: 'blur' }
+        ]
       }
     };
   },
@@ -150,6 +162,27 @@ export default {
     // 完成搜索
     handleSearch() {
       this.loadData();
+    },
+    // 添加用户
+    handleUserAdd() {
+      this.$refs.addForm.validate(async (valid) => {
+        if (valid) {
+          // 验证通过
+          const response = await this.$http.post('users', this.form);
+          const { meta: { status, msg } } = response.data;
+          if (status === 201) {
+            this.$message.success('添加成功');
+            this.addDialogFormVisible = false;
+            this.loadData();
+            this.$refs.addForm.resetFields();
+          } else {
+            this.$message.error(msg);
+          }
+        } else {
+          // 验证不通过
+          this.$message.warning('表单验证失败');
+        }
+      });
     }
   }
 };
