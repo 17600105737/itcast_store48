@@ -104,7 +104,7 @@
             </div>
           </el-dialog>
           <el-button type="warning" icon="el-icon-check" plain size="mini"></el-button>
-          <el-button type="danger" icon="el-icon-delete" plain size="mini"></el-button>
+          <el-button type="danger" @click="handleDelete(scope.row.id)" icon="el-icon-delete" plain size="mini"></el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -133,24 +133,24 @@ export default {
       count: 0,
       pagenum: 1,
       pagesize: 2,
-      searchValue: '',
+      searchValue: "",
       addDialogFormVisible: false,
       editDialogFormVisible: false,
       form: {
-        username: '',
-        password: '',
-        email: '',
-        mobile: ''
+        username: "",
+        password: "",
+        email: "",
+        mobile: ""
       },
       // 表单验证的规则
       rules: {
         username: [
-          { required: true, message: '用户名不能为空', trigger: 'blur' },
-          { min: 3, max: 6, message: '长度在 3 到 6 个字符', trigger: 'blur' }
+          { required: true, message: "用户名不能为空", trigger: "blur" },
+          { min: 3, max: 6, message: "长度在 3 到 6 个字符", trigger: "blur" }
         ],
         password: [
-          { required: true, message: '密码不能为空', trigger: 'blur' },
-          { min: 3, max: 11, message: '长度在 3 到 11 个字符', trigger: 'blur' }
+          { required: true, message: "密码不能为空", trigger: "blur" },
+          { min: 3, max: 11, message: "长度在 3 到 11 个字符", trigger: "blur" }
         ]
       }
     };
@@ -162,11 +162,13 @@ export default {
     // 加载数据
     async loadData() {
       // 发送请求的时候，要在请求头中添加Authorization=token
-      var token = sessionStorage.getItem('token');
-      this.$http.defaults.headers.common['Authorization'] = token;
+      var token = sessionStorage.getItem("token");
+      this.$http.defaults.headers.common["Authorization"] = token;
 
       var response = await this.$http.get(
-        `users?pagenum=${this.pagenum}&pagesize=${this.pagesize}&query=${this.searchValue}`
+        `users?pagenum=${this.pagenum}&pagesize=${this.pagesize}&query=${
+          this.searchValue
+        }`
       );
       var { meta: { status, msg } } = response.data;
       if (status === 200) {
@@ -192,13 +194,13 @@ export default {
     },
     // 添加用户
     handleUserAdd() {
-      this.$refs.addForm.validate(async (valid) => {
+      this.$refs.addForm.validate(async valid => {
         if (valid) {
           // 验证通过
-          const response = await this.$http.post('users', this.form);
+          const response = await this.$http.post("users", this.form);
           const { meta: { status, msg } } = response.data;
           if (status === 201) {
-            this.$message.success('添加成功');
+            this.$message.success("添加成功");
             this.addDialogFormVisible = false;
             this.loadData();
             this.$refs.addForm.resetFields();
@@ -207,7 +209,7 @@ export default {
           }
         } else {
           // 验证不通过
-          this.$message.warning('表单验证失败');
+          this.$message.warning("表单验证失败");
         }
       });
     },
@@ -218,26 +220,59 @@ export default {
       this.form.id = users.id;
     },
     // 编辑用户
-    async handleUserEdit(){
-      const response = await this.$http.put(`users/${this.form.id}`,{
-        email:this.form.email,
-        mobile:this.form.mobile
+    async handleUserEdit() {
+      const response = await this.$http.put(`users/${this.form.id}`, {
+        email: this.form.email,
+        mobile: this.form.mobile
       });
       const { meta: { status, msg } } = response.data;
       if (status === 200) {
-        this.$message.success('修改成功');
+        this.$message.success("修改成功");
         this.editDialogFormVisible = false;
-        this.loadData()
+        this.loadData();
       } else {
         this.$message.error(msg);
       }
     },
-    handleEditDialogClose(){
+    // 关闭编辑对话框清空表单
+    handleEditDialogClose() {
       console.log(111);
-      
+
       for (var key in this.form) {
-        this.form[key] = '';
+        this.form[key] = "";
       }
+    },
+    handleDelete(id) {
+      this.$confirm("是否删除该用户？", "提示", {
+        confirmButtonText: "确定",
+        cancelButtonText: "取消",
+        type: "warning"
+      })
+        .then(async () => {
+          const response = await this.$http.delete(`users/${id}`);
+          // 判断删除是否成功
+          const { meta: { status, msg } } = response.data;
+          if (status === 200) {
+            if (this.data.length === 1 && this.pagenum !== 1) {
+              this.pagenum--;
+              // 重新加载数据
+              this.loadData();
+            }
+            // 提示
+            this.$message({
+              type: "success",
+              message: "删除成功!"
+            });
+          } else {
+            this.$message.error(msg);
+          }
+        })
+        .catch(() => {
+          this.$message({
+            type: "info",
+            message: "已取消删除"
+          });
+        });
     }
   }
 };
