@@ -61,7 +61,6 @@
 </template>
 
 <script>
-import axios from 'axios';
 export default {
   data() {
     return {
@@ -75,9 +74,9 @@ export default {
     async loadData() {
       // 发送请求的时候，要在请求头中添加Authorization=token
       var token = sessionStorage.getItem('token');
-      axios.defaults.headers.common['Authorization'] = token;
+      this.$http.defaults.headers.common['Authorization'] = token;
 
-      var response = await axios.get(
+      var response = await this.$http.get(
         'http://localhost:8888/api/private/v1/users?pagenum=1&pagesize=10'
       );
       var { meta: { status, msg } } = response.data;
