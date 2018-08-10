@@ -7,8 +7,8 @@
     </el-breadcrumb>
     <el-row class="searchRow">
       <el-col :span="24">
-        <el-input clearable placeholder="请输入内容" class="searchInput">
-          <el-button slot="append" icon="el-icon-search"></el-button>
+        <el-input v-model="searchValue" clearable placeholder="请输入内容" class="searchInput">
+          <el-button @click="handleSearch" slot="append" icon="el-icon-search"></el-button>
         </el-input>
         <el-button type="success" plain>成功按钮</el-button>
       </el-col>
@@ -81,20 +81,22 @@ export default {
       data: [],
       count: 0,
       pagenum: 1,
-      pagesize: 2
+      pagesize: 2,
+      searchValue:''
     };
   },
   created() {
     this.loadData();
   },
   methods: {
+    // 加载数据
     async loadData() {
       // 发送请求的时候，要在请求头中添加Authorization=token
       var token = sessionStorage.getItem('token');
       this.$http.defaults.headers.common['Authorization'] = token;
 
       var response = await this.$http.get(
-        `users?pagenum=${this.pagenum}&pagesize=${this.pagesize}`
+        `users?pagenum=${this.pagenum}&pagesize=${this.pagesize}&query=${this.searchValue}`
       );
       var { meta: { status, msg } } = response.data;
       if (status === 200) {
@@ -113,6 +115,9 @@ export default {
     handleCurrentChange(val) {
       this.pagenum = val;
       this.loadData();
+    },
+    handleSearch() {
+      this.loadData()
     }
   }
 };
