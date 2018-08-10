@@ -15,6 +15,9 @@ import axios from 'axios';
 Vue.use(ElementUI);
 // 不显示Vue的默认浏览器提示代码
 Vue.config.productionTip = false;
+// 配置axios请求地址
+axios.defaults.baseURL = 'http://localhost:8888/api/private/v1/';
+
 Vue.prototype.$http = axios;
 /* eslint-disable no-new */
 new Vue({

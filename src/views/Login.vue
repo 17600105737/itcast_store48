@@ -26,7 +26,7 @@ export default {
   methods: {
     async handleLogin() {
       var response = await this.$http.post(
-        'http://localhost:8888/api/private/v1/login',
+        'login',
         this.formData
       );
       var status = response.data.meta.status;
