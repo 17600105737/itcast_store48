@@ -10,7 +10,31 @@
         <el-input v-model="searchValue" clearable placeholder="请输入内容" class="searchInput">
           <el-button @click="handleSearch" slot="append" icon="el-icon-search"></el-button>
         </el-input>
-        <el-button type="success" plain>成功按钮</el-button>
+        <el-button type="success" @click="addDialogFormVisible=true" plain>添加用户</el-button>
+        <!-- 添加用户对话框 -->
+        <el-dialog title="添加用户" :visible.sync="addDialogFormVisible">
+          <el-form
+          :model="form"
+          label-width="80px"
+          >
+            <el-form-item label="用户名">
+              <el-input v-model="form.username" auto-complete="off"></el-input>
+            </el-form-item>
+            <el-form-item label="密码">
+              <el-input v-model="form.password" auto-complete="off"></el-input>
+            </el-form-item>
+            <el-form-item label="邮箱">
+              <el-input v-model="form.email" auto-complete="off"></el-input>
+            </el-form-item>
+            <el-form-item label="电话">
+              <el-input v-model="form.mobile" auto-complete="off"></el-input>
+            </el-form-item>
+          </el-form>
+          <div slot="footer" class="dialog-footer">
+            <el-button @click="addDialogFormVisible = false">取 消</el-button>
+            <el-button type="primary" @click="addDialogFormVisible = false">确 定</el-button>
+          </div>
+        </el-dialog>
       </el-col>
     </el-row>
     <el-table
@@ -82,7 +106,14 @@ export default {
       count: 0,
       pagenum: 1,
       pagesize: 2,
-      searchValue:''
+      searchValue: '',
+      addDialogFormVisible: false,
+      form: {
+        username: '',
+        password: '',
+        email: '',
+        mobile: ''
+      }
     };
   },
   created() {
@@ -116,8 +147,9 @@ export default {
       this.pagenum = val;
       this.loadData();
     },
+    // 完成搜索
     handleSearch() {
-      this.loadData()
+      this.loadData();
     }
   }
 };
