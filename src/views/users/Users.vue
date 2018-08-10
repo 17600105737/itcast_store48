@@ -57,6 +57,20 @@
         </template>
       </el-table-column>
     </el-table>
+    <!-- 分页部分 -->
+    <!--
+      total 总条数
+    -->
+    <el-pagination
+      @size-change="handelSizeChange"
+      @current-change="handleCurrentChange"
+      :current-page="pagenum"
+      :page-size="pagesize"
+      :page-sizes="[2, 4, 6, 8]"
+      :pager-count="5"
+      layout="total, sizes, prev, pager, next, jumper"
+      :total="count">
+    </el-pagination>
   </el-card>
 </template>
 
@@ -64,7 +78,10 @@
 export default {
   data() {
     return {
-      data: []
+      data: [],
+      count: 0,
+      pagenum: 1,
+      pagesize: 2
     };
   },
   created() {
@@ -77,14 +94,25 @@ export default {
       this.$http.defaults.headers.common['Authorization'] = token;
 
       var response = await this.$http.get(
-        'users?pagenum=1&pagesize=10'
+        `users?pagenum=${this.pagenum}&pagesize=${this.pagesize}`
       );
       var { meta: { status, msg } } = response.data;
       if (status === 200) {
         this.data = response.data.data.users;
+        this.count = response.data.data.total;
       } else {
         this.$message.error(msg);
       }
+    },
+    // 点击切换每页显示多少条数据
+    handelSizeChange(val) {
+      this.pagesize = val;
+      this.loadData();
+    },
+    // 点击页码切换数据
+    handleCurrentChange(val) {
+      this.pagenum = val;
+      this.loadData();
     }
   }
 };
