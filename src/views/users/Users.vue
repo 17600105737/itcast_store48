@@ -77,7 +77,32 @@
         prop="address"
         label="操作">
         <template slot-scope="scope">
-          <el-button type="primary" icon="el-icon-edit" plain size="mini"></el-button>
+          <el-button type="primary" icon="el-icon-edit" @click="openEditDialog(scope.row)" plain size="mini"></el-button>
+          <!-- 修改用户对话框 -->
+          <el-dialog
+          @close="handleEditDialogClose"
+          title="修改用户"
+          :visible="editDialogFormVisible"
+          >
+            <el-form
+            :model="form"
+            label-width="80px"
+            >
+              <el-form-item label="用户名" prop="username">
+                <el-input :disabled="true" v-model="form.username" auto-complete="off"></el-input>
+              </el-form-item>
+              <el-form-item label="邮箱">
+                <el-input v-model="form.email" auto-complete="off"></el-input>
+              </el-form-item>
+              <el-form-item label="电话">
+                <el-input v-model="form.mobile" auto-complete="off"></el-input>
+              </el-form-item>
+            </el-form>
+            <div slot="footer" class="dialog-footer">
+              <el-button @click="editDialogFormVisible = false">取 消</el-button>
+              <el-button type="primary" @click="handleUserEdit">确 定</el-button>
+            </div>
+          </el-dialog>
           <el-button type="warning" icon="el-icon-check" plain size="mini"></el-button>
           <el-button type="danger" icon="el-icon-delete" plain size="mini"></el-button>
         </template>
@@ -110,12 +135,14 @@ export default {
       pagesize: 2,
       searchValue: '',
       addDialogFormVisible: false,
+      editDialogFormVisible: false,
       form: {
         username: '',
         password: '',
         email: '',
         mobile: ''
       },
+      // 表单验证的规则
       rules: {
         username: [
           { required: true, message: '用户名不能为空', trigger: 'blur' },
@@ -183,6 +210,34 @@ export default {
           this.$message.warning('表单验证失败');
         }
       });
+    },
+    // 打开编辑用户对话框
+    openEditDialog(users) {
+      this.editDialogFormVisible = true;
+      this.form = users;
+      this.form.id = users.id;
+    },
+    // 编辑用户
+    async handleUserEdit(){
+      const response = await this.$http.put(`users/${this.form.id}`,{
+        email:this.form.email,
+        mobile:this.form.mobile
+      });
+      const { meta: { status, msg } } = response.data;
+      if (status === 200) {
+        this.$message.success('修改成功');
+        this.editDialogFormVisible = false;
+        this.loadData()
+      } else {
+        this.$message.error(msg);
+      }
+    },
+    handleEditDialogClose(){
+      console.log(111);
+      
+      for (var key in this.form) {
+        this.form[key] = '';
+      }
     }
   }
 };
