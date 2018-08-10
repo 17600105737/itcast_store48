@@ -8,17 +8,13 @@ import ElementUI from 'element-ui';
 // 导入全局css样式
 import 'element-ui/lib/theme-chalk/index.css';
 import '@/assets/css/index.css';
-// 导入axios包 配置全局axios
-import axios from 'axios';
-
+import Myaxios from '@/plugins/Myaxios';
 // 注册EUI
 Vue.use(ElementUI);
+Vue.use(Myaxios);
 // 不显示Vue的默认浏览器提示代码
 Vue.config.productionTip = false;
-// 配置axios请求地址
-axios.defaults.baseURL = 'http://localhost:8888/api/private/v1/';
 
-Vue.prototype.$http = axios;
 /* eslint-disable no-new */
 new Vue({
   el: '#app',
