@@ -83,7 +83,7 @@
           <el-dialog
           @close="handleEditDialogClose"
           title="修改用户"
-          :visible="editDialogFormVisible"
+          :visible.sync="editDialogFormVisible"
           >
             <el-form
             :model="form"
@@ -104,7 +104,26 @@
               <el-button type="primary" @click="handleUserEdit">确 定</el-button>
             </div>
           </el-dialog>
-          <el-button type="warning" icon="el-icon-check" plain size="mini"></el-button>
+          <el-button type="warning" @click="setRoleDialogFormVisible = true" icon="el-icon-check" plain size="mini"></el-button>
+          <!-- 分配角色对话框 -->
+          <el-dialog
+          title="分配角色"
+          :visible.sync="setRoleDialogFormVisible"
+          >
+            <el-form
+            :model="form"
+            label-width="120px"
+            >
+              <el-form-item label="当前用户" prop="username">
+              </el-form-item>
+              <el-form-item label="请选择用户">
+              </el-form-item>
+            </el-form>
+            <div slot="footer" class="dialog-footer">
+              <el-button @click="setRoleDialogFormVisible = false">取 消</el-button>
+              <el-button type="primary" @click="setRoleDialogFormVisible = false">确 定</el-button>
+            </div>
+          </el-dialog>
           <el-button type="danger" @click="handleDelete(scope.row.id)" icon="el-icon-delete" plain size="mini"></el-button>
         </template>
       </el-table-column>
@@ -137,6 +156,7 @@ export default {
       searchValue: "",
       addDialogFormVisible: false,
       editDialogFormVisible: false,
+      setRoleDialogFormVisible: false,
       form: {
         username: "",
         password: "",
@@ -217,7 +237,9 @@ export default {
     // 打开编辑用户对话框
     openEditDialog(users) {
       this.editDialogFormVisible = true;
-      this.form = users;
+      this.form.email = users.email;
+      this.form.username = users.username;
+      this.form.mobile = users.mobile;
       this.form.id = users.id;
     },
     // 编辑用户
@@ -257,9 +279,11 @@ export default {
           if (status === 200) {
             if (this.data.length === 1 && this.pagenum !== 1) {
               this.pagenum--;
-              // 重新加载数据
-              this.loadData();
             }
+            // 重新加载数据
+
+            this.loadData();
+
             // 提示
             this.$message({
               type: "success",
@@ -276,9 +300,12 @@ export default {
           });
         });
     },
+    // 用户状态开关
     async handleChange(user) {
-      const response = await this.$http.put(`users/${user.id}/state/${user.mg_state}`);
-       const { meta: { status, msg } } = response.data;
+      const response = await this.$http.put(
+        `users/${user.id}/state/${user.mg_state}`
+      );
+      const { meta: { status, msg } } = response.data;
       if (status === 200) {
         this.$message.success(msg);
       } else {
