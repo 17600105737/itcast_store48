@@ -335,6 +335,8 @@ export default {
       this.currentUserId = user.id;
       const response = await this.$http.get('roles');
       this.roles = response.data.data;
+      const userResponse = await this.$http.get(`users/${user.id}`);
+      this.currentRoleId = userResponse.data.data.rid;
     }
   }
 };
