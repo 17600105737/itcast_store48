@@ -104,7 +104,7 @@
               <el-button type="primary" @click="handleUserEdit">确 定</el-button>
             </div>
           </el-dialog>
-          <el-button type="warning" @click="setRoleDialogFormVisible = true" icon="el-icon-check" plain size="mini"></el-button>
+          <el-button type="warning" @click="handleSetRole(scope.row)" icon="el-icon-check" plain size="mini"></el-button>
           <!-- 分配角色对话框 -->
           <el-dialog
           title="分配角色"
@@ -115,8 +115,18 @@
             label-width="120px"
             >
               <el-form-item label="当前用户" prop="username">
+                {{ currentName }}
               </el-form-item>
               <el-form-item label="请选择用户">
+                <el-select v-model="currentRoleId">
+                  <el-option label="请选择" :value="-1" disabled></el-option>
+                  <el-option
+                  v-for="item in roles"
+                  :key="item.id"
+                  :label="item.roleName"
+                  :value="item.id">
+                  </el-option>
+                </el-select>
               </el-form-item>
             </el-form>
             <div slot="footer" class="dialog-footer">
@@ -154,9 +164,16 @@ export default {
       pagenum: 1,
       pagesize: 2,
       searchValue: "",
+      // 添加用户对话框
       addDialogFormVisible: false,
+      // 编辑用户对话框
       editDialogFormVisible: false,
+      // 分配角色对话框
       setRoleDialogFormVisible: false,
+      currentName: '',
+      currentRoleId: -1,
+      currentUserId: '',
+      roles: [],
       form: {
         username: "",
         password: "",
@@ -311,6 +328,13 @@ export default {
       } else {
         this.$message.error(msg);
       }
+    },
+    async handleSetRole(user){
+      this.setRoleDialogFormVisible = true;
+      this.currentName = user.username;
+      this.currentUserId = user.id;
+      const response = await this.$http.get('roles');
+      this.roles = response.data.data;
     }
   }
 };
