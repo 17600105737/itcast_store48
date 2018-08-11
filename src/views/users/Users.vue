@@ -104,7 +104,7 @@
               <el-button type="primary" @click="handleUserEdit">确 定</el-button>
             </div>
           </el-dialog>
-          <el-button type="warning" @click="handleSetRole(scope.row)" icon="el-icon-check" plain size="mini"></el-button>
+          <el-button type="warning" @click="handleOpenSetRole(scope.row)" icon="el-icon-check" plain size="mini"></el-button>
           <!-- 分配角色对话框 -->
           <el-dialog
           title="分配角色"
@@ -131,7 +131,7 @@
             </el-form>
             <div slot="footer" class="dialog-footer">
               <el-button @click="setRoleDialogFormVisible = false">取 消</el-button>
-              <el-button type="primary" @click="setRoleDialogFormVisible = false">确 定</el-button>
+              <el-button type="primary" @click="handleSetRole">确 定</el-button>
             </div>
           </el-dialog>
           <el-button type="danger" @click="handleDelete(scope.row.id)" icon="el-icon-delete" plain size="mini"></el-button>
@@ -163,7 +163,7 @@ export default {
       count: 0,
       pagenum: 1,
       pagesize: 2,
-      searchValue: "",
+      searchValue: '',
       // 添加用户对话框
       addDialogFormVisible: false,
       // 编辑用户对话框
@@ -175,20 +175,20 @@ export default {
       currentUserId: '',
       roles: [],
       form: {
-        username: "",
-        password: "",
-        email: "",
-        mobile: ""
+        username: '',
+        password: '',
+        email: '',
+        mobile: ''
       },
       // 表单验证的规则
       rules: {
         username: [
-          { required: true, message: "用户名不能为空", trigger: "blur" },
-          { min: 3, max: 6, message: "长度在 3 到 6 个字符", trigger: "blur" }
+          { required: true, message: '用户名不能为空', trigger: 'blur' },
+          { min: 3, max: 6, message: '长度在 3 到 6 个字符', trigger: 'blur' }
         ],
         password: [
-          { required: true, message: "密码不能为空", trigger: "blur" },
-          { min: 3, max: 11, message: "长度在 3 到 11 个字符", trigger: "blur" }
+          { required: true, message: '密码不能为空', trigger: 'blur' },
+          { min: 3, max: 11, message: '长度在 3 到 11 个字符', trigger: 'blur' }
         ]
       }
     };
@@ -200,8 +200,8 @@ export default {
     // 加载数据
     async loadData() {
       // 发送请求的时候，要在请求头中添加Authorization=token
-      var token = sessionStorage.getItem("token");
-      this.$http.defaults.headers.common["Authorization"] = token;
+      var token = sessionStorage.getItem('token');
+      this.$http.defaults.headers.common['Authorization'] = token;
 
       var response = await this.$http.get(
         `users?pagenum=${this.pagenum}&pagesize=${this.pagesize}&query=${
@@ -235,10 +235,10 @@ export default {
       this.$refs.addForm.validate(async valid => {
         if (valid) {
           // 验证通过
-          const response = await this.$http.post("users", this.form);
+          const response = await this.$http.post('users', this.form);
           const { meta: { status, msg } } = response.data;
           if (status === 201) {
-            this.$message.success("添加成功");
+            this.$message.success('添加成功');
             this.addDialogFormVisible = false;
             this.loadData();
             this.$refs.addForm.resetFields();
@@ -247,7 +247,7 @@ export default {
           }
         } else {
           // 验证不通过
-          this.$message.warning("表单验证失败");
+          this.$message.warning('表单验证失败');
         }
       });
     },
@@ -267,7 +267,7 @@ export default {
       });
       const { meta: { status, msg } } = response.data;
       if (status === 200) {
-        this.$message.success("修改成功");
+        this.$message.success('修改成功');
         this.editDialogFormVisible = false;
         this.loadData();
       } else {
@@ -279,15 +279,15 @@ export default {
       console.log(111);
 
       for (var key in this.form) {
-        this.form[key] = "";
+        this.form[key] = '';
       }
     },
     // 删除数据
     handleDelete(id) {
-      this.$confirm("是否删除该用户？", "提示", {
-        confirmButtonText: "确定",
-        cancelButtonText: "取消",
-        type: "warning"
+      this.$confirm('是否删除该用户？', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
       })
         .then(async () => {
           const response = await this.$http.delete(`users/${id}`);
@@ -303,8 +303,8 @@ export default {
 
             // 提示
             this.$message({
-              type: "success",
-              message: "删除成功!"
+              type: 'success',
+              message: '删除成功!'
             });
           } else {
             this.$message.error(msg);
@@ -312,8 +312,8 @@ export default {
         })
         .catch(() => {
           this.$message({
-            type: "info",
-            message: "已取消删除"
+            type: 'info',
+            message: '已取消删除'
           });
         });
     },
@@ -329,7 +329,8 @@ export default {
         this.$message.error(msg);
       }
     },
-    async handleSetRole(user){
+    // 分配用户角色显示
+    async handleOpenSetRole(user) {
       this.setRoleDialogFormVisible = true;
       this.currentName = user.username;
       this.currentUserId = user.id;
@@ -337,6 +338,19 @@ export default {
       this.roles = response.data.data;
       const userResponse = await this.$http.get(`users/${user.id}`);
       this.currentRoleId = userResponse.data.data.rid;
+    },
+    // 分配用户角色
+    async handleSetRole() {
+      const response = await this.$http.put(`users/${this.currentUserId}/role`, {
+        rid: this.currentRoleId
+      });
+      const { meta: { status, msg } } = response.data;
+      if (status === 200) {
+        this.$message.success(msg);
+        this.setRoleDialogFormVisible = false;
+      } else {
+        this.$message.error(msg);
+      }
     }
   }
 };
