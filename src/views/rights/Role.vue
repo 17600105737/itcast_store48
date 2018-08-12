@@ -55,6 +55,46 @@
       </el-table-column>
       <el-table-column
         label="操作">
+        <template slot-scope="scope">
+          <el-button
+          type="primary"
+          icon="el-icon-edit"
+          plain
+          size="mini"
+          >
+          </el-button>
+          <el-button
+          type="danger"
+          icon="el-icon-delete"
+          plain
+          size="mini"
+          >
+          </el-button>
+          <el-button
+          type="warning"
+          icon="el-icon-check"
+          plain
+          size="mini"
+          @click="handleOpenTree(scope.row)"
+          >
+          </el-button>
+          <el-dialog title="权限分配" :visible.sync="setRoledialogFormVisible">
+            <!-- 树形结构 -->
+            <el-tree
+            show-checkbox
+            default-expand-all
+            :data="treeData"
+            node-key="id"
+            :default-checked-keys="checkList"
+            :props="defaultProps"
+            >
+            </el-tree>
+            <div slot="footer" class="dialog-footer">
+              <el-button @click="setRoledialogFormVisible = false">取 消</el-button>
+              <el-button type="primary" @click="setRoledialogFormVisible = false">确 定</el-button>
+            </div>
+          </el-dialog>
+        </template>
       </el-table-column>
     </el-table>
   </el-card>
@@ -64,7 +104,14 @@
 export default {
   data() {
     return {
-      tableData: []
+      tableData: [],
+      setRoledialogFormVisible: false,
+      treeData: [],
+      defaultProps: {
+        label: 'authName',
+        children: 'children'
+      },
+      checkList: []
     };
   },
   created() {
@@ -91,6 +138,21 @@ export default {
       } else {
         this.$message.error(msg);
       }
+    },
+    // 打开树形列表
+    async handleOpenTree(role) {
+      this.checkList = [];
+      this.setRoledialogFormVisible = true;
+      const response = await this.$http.get('rights/tree');
+      this.treeData = response.data.data;
+
+      role.children.forEach((level1) => {
+        level1.children.forEach((level2)=>{
+          level2.children.forEach((level3)=>{
+            this.checkList.push(level3.id)
+          })
+        })
+      });
     }
   }
 };
