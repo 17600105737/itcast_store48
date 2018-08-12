@@ -14,7 +14,7 @@
         <el-row class="level1Row" v-for="level1 in scope.row.children" :key="level1.id">
           <el-col :span="4">
             <!-- 一级权限 -->
-            <el-tag closable>
+            <el-tag @close="handleClose(scope.row,level1.id)" closable>
               {{ level1.authName }}
             </el-tag>
           </el-col>
@@ -22,12 +22,12 @@
             <el-row v-for="level2 in level1.children" :key="level2.id">
               <el-col :span="4">
                 <!-- 二级权限 -->
-                <el-tag closable type="success">
+                <el-tag @close="handleClose(scope.row,level2.id)" closable type="success">
                   {{ level2.authName }}
                 </el-tag>
               </el-col>
               <el-col :span="20">
-                <el-tag class="level3Tag" closable type="warning" v-for="level3 in level2.children" :key="level3.id">
+                <el-tag @close="handleClose(scope.row,level3.id)" class="level3Tag" closable type="warning" v-for="level3 in level2.children" :key="level3.id">
                   {{ level3.authName }}
                 </el-tag>
               </el-col>
@@ -71,11 +71,23 @@ export default {
     this.loadData();
   },
   methods: {
+    // 加载数据
     async loadData() {
       const response = await this.$http.get('roles');
       const { meta: { status, msg } } = response.data;
       if (status === 200) {
         this.tableData = response.data.data;
+      } else {
+        this.$message.error(msg);
+      }
+    },
+    // 删除指定权限
+    async handleClose(role,rightId) {
+      const response = await this.$http.delete(`roles/${role.id}/rights/${rightId}`);
+      const { meta: { status, msg } } = response.data;
+      if (status === 200) {
+        this.$message.success(msg);
+        role.children = response.data.data;
       } else {
         this.$message.error(msg);
       }
