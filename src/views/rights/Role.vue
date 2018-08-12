@@ -34,6 +34,9 @@
             </el-row>
           </el-col>
         </el-row>
+        <el-row v-if="scope.row.children.length===0">
+          没有分配权限
+        </el-row>
       </template>
     </el-table-column>
       <el-table-column
