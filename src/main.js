@@ -16,7 +16,7 @@ import MyBreadcrumb from '@/components/MyBreadcrumb';
 Vue.use(ElementUI);
 Vue.use(Myaxios);
 // 定义全局组件
-Vue.component(MyBreadcrumb.name,MyBreadcrumb);
+Vue.component(MyBreadcrumb.name, MyBreadcrumb);
 // 不显示Vue的默认浏览器提示代码
 Vue.config.productionTip = false;
 

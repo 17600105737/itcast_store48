@@ -52,7 +52,7 @@ export default {
   },
   methods: {
     async loadData() {
-      const response = await this.$http.get("rights/list");
+      const response = await this.$http.get('rights/list');
       const { meta: { status, msg } } = response.data;
       if (status === 200) {
         this.data = response.data.data;
