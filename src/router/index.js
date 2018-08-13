@@ -6,7 +6,7 @@ import Home from '@/views/Home';
 import Users from '@/views/users/Users';
 import Rights from '@/views/rights/Right';
 import Roles from '@/views/rights/Role';
-
+import { Message } from 'element-ui';
 Vue.use(Router);
 // 配置路由规则
 
@@ -29,6 +29,7 @@ router.beforeEach((to, from, next)=>{
   if (to.name && to.name.toLocaleLowerCase()!=='login') {
     const token = sessionStorage.getItem('token');
     if (!token) {
+      Message.error('请先登录');
       router.push('login');
       return;
     }
