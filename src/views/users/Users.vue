@@ -360,9 +360,6 @@ export default {
 </script>
 
 <style>
-.card {
-  height: 100%;
-}
 .searchInput {
   width: 300px;
 }

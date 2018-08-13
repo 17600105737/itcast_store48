@@ -65,10 +65,6 @@ export default {
 </script>
 
 <style>
-.card {
-  height: 100%;
-  overflow: auto;
-}
 .nav {
   margin-bottom: 10px;
 }

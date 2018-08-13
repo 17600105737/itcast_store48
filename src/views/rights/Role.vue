@@ -183,10 +183,6 @@ export default {
 </script>
 
 <style>
-.card {
-  height: 100%;
-  overflow: auto;
-}
 .addButton {
   margin-top: 10px;
   margin-bottom: 5px;
