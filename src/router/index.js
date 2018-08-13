@@ -6,10 +6,11 @@ import Home from '@/views/Home';
 import Users from '@/views/users/Users';
 import Rights from '@/views/rights/Right';
 import Roles from '@/views/rights/Role';
-Vue.use(Router);
 
+Vue.use(Router);
 // 配置路由规则
-export default new Router({
+
+const router = new Router({
   routes: [
     { name: 'login', path: '/login', component: Login },
     {
@@ -18,9 +19,20 @@ export default new Router({
       component: Home,
       children: [
         { name: 'users', path: '/users', component: Users },
-        { name: 'right', path: '/right', component: Rights },
-        { name: 'role', path: '/role', component: Roles }
+        { name: 'right', path: '/rights', component: Rights },
+        { name: 'role', path: '/roles', component: Roles }
       ]
     }
   ]
 });
+router.beforeEach((to, from, next)=>{
+  if (to.name && to.name.toLocaleLowerCase()!=='login') {
+    const token = sessionStorage.getItem('token');
+    if (!token) {
+      router.push('login');
+      return;
+    }
+  }
+  next();
+})
+export default router;
