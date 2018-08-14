@@ -66,6 +66,7 @@
             <el-button
             type="danger"
             icon="el-icon-delete"
+            @click="handleDeleteCate(scope.row.cat_id)"
             plain
             size="mini"
             >
@@ -195,6 +196,30 @@ export default {
       } else {
         this.$message.error(msg);
       }
+    },
+    handleDeleteCate(id) {
+      this.$confirm('是否删除这条数据？', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(async () => {
+        const response = await this.$http.delete(`categories/${id}`);
+        const { meta: { status, msg } } = response.data;
+        if (status === 200) {
+          this.$message({
+            type: 'success',
+            message: '删除成功!'
+          });
+          this.loadData();
+        } else {
+          this.$message.error(msg);
+        }
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '已取消删除'
+        });          
+      });
     }
   }
 };
