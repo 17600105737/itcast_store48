@@ -159,7 +159,7 @@ export default {
       },
       catIds:[],
       currentCatId:-1,
-      currentCat:[]
+      currentCat:null
     }
   },
   created() {

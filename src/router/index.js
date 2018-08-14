@@ -7,6 +7,7 @@ import Users from '@/views/users/Users';
 import Rights from '@/views/rights/Right';
 import Roles from '@/views/rights/Role';
 import Categories from '@/views/goods/Categories';
+import Goods from '@/views/goods/Goods';
 import { Message } from 'element-ui';
 Vue.use(Router);
 // 配置路由规则
@@ -23,6 +24,7 @@ const router = new Router({
         { name: 'right', path: '/rights', component: Rights },
         { name: 'role', path: '/roles', component: Roles },
         { name: 'categories', path: '/categories', component: Categories },
+        { name: 'goods', path: '/goods', component: Goods }
       ]
     }
   ]
