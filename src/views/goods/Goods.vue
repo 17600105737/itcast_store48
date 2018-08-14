@@ -1,5 +1,5 @@
 <template>
-  <el-card>
+  <el-card class="card">
     <!-- 面包屑 -->
     <my-breadcrumb level1="商品管理" level2="商品列表"></my-breadcrumb>
     <!-- 搜索 -->
@@ -8,7 +8,7 @@
         <el-input clearable placeholder="请输入内容" class="search">
           <el-button slot="append" icon="el-icon-search"></el-button>
         </el-input>
-        <el-button type="success" plain>添加商品</el-button>
+        <el-button @click="$router.push('/goods/add')" type="success" plain>添加商品</el-button>
       </el-col>
     </el-row>
     <!-- 表格 -->
