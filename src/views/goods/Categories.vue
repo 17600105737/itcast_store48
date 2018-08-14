@@ -57,6 +57,7 @@
           label="操作">
           <template slot-scope="scope">
             <el-button
+            @click="handleOpenEditCate(scope.row)"
             type="primary"
             icon="el-icon-edit"
             plain
@@ -101,6 +102,21 @@
           <el-button type="primary" @click="handleAddCate">确 定</el-button>
         </div>
       </el-dialog>
+      <!-- 编辑用户对话框 -->
+      <el-dialog title="编辑商品分类" :visible.sync="editCateDialogFormVisible">
+        <el-form
+        :model="form"
+        label-width="100px"
+        >
+          <el-form-item label="分类名称">
+            <el-input v-model="form.cat_name" auto-complete="off"></el-input>
+          </el-form-item>
+        </el-form>
+        <div slot="footer" class="dialog-footer">
+          <el-button @click="editCateDialogFormVisible = false">取 消</el-button>
+          <el-button type="primary" @click="handleEditCate">确 定</el-button>
+        </div>
+      </el-dialog>
       <!-- 分页 -->
       <el-pagination
         @size-change="handleSizeChange"
@@ -129,6 +145,7 @@ export default {
       pagenum: 1,
       pagesize: 6,
       addCateDialogFormVisible:false,
+      editCateDialogFormVisible:false,
       form:{
         cat_name:'',
         cat_pid:-1,
@@ -140,7 +157,9 @@ export default {
         label:'cat_name',
         children:'children'
       },
-      catIds:[]
+      catIds:[],
+      currentCatId:-1,
+      currentCat:[]
     }
   },
   created() {
@@ -197,6 +216,7 @@ export default {
         this.$message.error(msg);
       }
     },
+    // 删除当前分类
     handleDeleteCate(id) {
       this.$confirm('是否删除这条数据？', '提示', {
         confirmButtonText: '确定',
@@ -220,6 +240,25 @@ export default {
           message: '已取消删除'
         });          
       });
+    },
+    handleOpenEditCate(cate) {
+      this.editCateDialogFormVisible = true;
+      this.form.cat_name = cate.cat_name;
+      this.currentCatId = cate.cat_id;
+      this.currentCat = cate;
+    },
+    async handleEditCate() {
+      const response = await this.$http.put(`categories/${this.currentCatId}`,{
+        cat_name: this.form.cat_name
+      });
+      const { meta: { status, msg } } = response.data;
+      if (status===200) {
+        this.$message.success(msg);
+        this.editCateDialogFormVisible = false;
+        this.currentCat.cat_name = response.data.data.cat_name;
+      } else {
+        this.$message.error(msg);
+      }
     }
   }
 };
