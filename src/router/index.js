@@ -9,9 +9,12 @@ import Roles from '@/views/rights/Role';
 import Categories from '@/views/goods/Categories';
 import Goods from '@/views/goods/Goods';
 import { Message } from 'element-ui';
+import moment from 'moment';
 Vue.use(Router);
 // 配置路由规则
-
+Vue.filter('fmtDate',(value,fmtString)=>{
+  return moment(value).format(fmtString);
+})
 const router = new Router({
   routes: [
     { name: 'login', path: '/login', component: Login },

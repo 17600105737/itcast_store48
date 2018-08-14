@@ -14,31 +14,36 @@
     <!-- 表格 -->
     <el-table
       :data="data"
+      border
+      stripe
       style="width: 100%">
       <el-table-column
       type="index"
       >
       </el-table-column>
       <el-table-column
-        prop="date"
+        prop="goods_name"
         label="商品名称"
-        width="180">
+        width="500">
       </el-table-column>
       <el-table-column
-        prop="name"
+        prop="goods_price"
         label="商品价格(元)"
-        width="180">
+        width="110">
       </el-table-column>
       <el-table-column
-        prop="address"
-        label="商品重量">
+        prop="goods_weight"
+        label="商品重量"
+        width="110">
       </el-table-column>
       <el-table-column
-        prop="address"
+        prop="add_time"
         label="创建时间">
+        <template slot-scope="scope">
+          {{ scope.row.add_time | fmtDate('YYYY-MM-DD HH:mm:ss') }}
+        </template>
       </el-table-column>
       <el-table-column
-        prop="address"
         label="操作">
         <template slot-scope="scope">
           <el-button
@@ -58,6 +63,16 @@
         </template>
       </el-table-column>
     </el-table>
+    <!-- 分页 -->
+    <el-pagination
+      @size-change="handleSizeChange"
+      @current-change="handleCurrentChange"
+      :current-page="pagenum"
+      :page-sizes="[4, 6, 8, 10]"
+      :page-size="pagesize"
+      layout="total, sizes, prev, pager, next, jumper"
+      :total="total">
+    </el-pagination>
   </el-card>
 </template>
 
@@ -65,8 +80,29 @@
 export default {
   data() {
     return {
-      data: []
+      data: [],
+      pagenum: 1,
+      pagesize: 6,
+      total: 0
     }
+  },
+  created() {
+    this.loadData();
+  },
+  methods: {
+    async loadData() {
+      const response = await this.$http.get(`goods?pagenum=${this.pagenum}&pagesize=${this.pagesize}`);
+      this.total = response.data.data.total;
+      this.data = response.data.data.goods;
+    },
+    handleSizeChange(val) {
+      this.pagesize = val;
+      this.loadData();
+    },
+    handleCurrentChange(val) {
+      this.pagenum = val;
+      this.loadData();
+    },
   }
 }
 </script>
