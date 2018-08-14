@@ -7,7 +7,9 @@
       type="success"
       plain
       class="cateButton"
-      >添加分类</el-button>
+      @click="handleOpenAddDialog"
+      >添加分类
+      </el-button>
       <!-- 表格 -->
       <el-table
       border
@@ -71,6 +73,33 @@
           </template>
         </el-table-column>
       </el-table>
+      <!-- 添加用户对话框 -->
+      <el-dialog title="添加商品分类" :visible.sync="addCateDialogFormVisible">
+        <el-form
+        :model="form"
+        label-width="100px"
+        >
+          <el-form-item label="分类名称">
+            <el-input v-model="form.cat_name" auto-complete="off"></el-input>
+          </el-form-item>
+          <el-form-item label="分类列表">
+            <el-cascader
+              placeholder="默认添加一级菜单"
+              clearable
+              change-on-select
+              expand-trigger="hover"
+              :options="options"
+              :props="defaultProps"
+              v-model="catIds"
+              >
+            </el-cascader>
+          </el-form-item>
+        </el-form>
+        <div slot="footer" class="dialog-footer">
+          <el-button @click="addCateDialogFormVisible = false">取 消</el-button>
+          <el-button type="primary" @click="handleAddCate">确 定</el-button>
+        </div>
+      </el-dialog>
       <!-- 分页 -->
       <el-pagination
         @size-change="handleSizeChange"
@@ -97,7 +126,20 @@ export default {
       data: [],
       total: 0,
       pagenum: 1,
-      pagesize: 6
+      pagesize: 6,
+      addCateDialogFormVisible:false,
+      form:{
+        cat_name:'',
+        cat_pid:-1,
+        cat_level:0
+      },
+      options:[],
+      defaultProps: {
+        value:'cat_id',
+        label:'cat_name',
+        children:'children'
+      },
+      catIds:[]
     }
   },
   created() {
@@ -121,6 +163,38 @@ export default {
     handleCurrentChange(val) {
       this.pagenum = val;
       this.loadData();
+    },
+    // 打开添加分类对话框
+    async handleOpenAddDialog() {
+      this.addCateDialogFormVisible = true;
+      const response = await this.$http.get('categories?type=2');
+      this.options = response.data.data;
+    },
+    // 确定添加分类
+    async handleAddCate() {
+      /*
+      添加分类需要三个参数
+      cat_name  要添加的分类名称 
+      cat_pid   父id
+      cat_level 分类层级
+      */
+      this.form.cat_level = this.catIds.length;
+      if (this.catIds.length===0) {
+        this.form.cat_pid = 0;
+      } else if (this.catIds.length===1) {
+        this.form.cat_pid = this.catIds[0];
+      } else if (this.catIds.length===2) {
+        this.form.cat_pid = this.catIds[1];
+      }
+      const response = await this.$http.post('categories',this.form);
+      const { meta: { status, msg } } = response.data;
+      if (status === 201) {
+        this.$message.success(msg);
+        this.addCateDialogFormVisible = false;
+        this.loadData();
+      } else {
+        this.$message.error(msg);
+      }
     }
   }
 };
