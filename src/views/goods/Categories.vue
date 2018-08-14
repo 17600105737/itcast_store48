@@ -14,11 +14,27 @@
       stripe
       :data="data"
       style="width: 100%">
-        <el-table-column
+      <!-- 
+        treeKey 每个节点的唯一标识
+        levelKey 节点的层次
+        childKey 显示子节点的属性名称
+        parentKey 所属父节点的属性
+       -->
+      <el-table-tree-column
+      prop="cat_name"
+      label="分类名称"
+      treeKey="cat_id"
+      childKey="children"
+      levelKey="cat_level"
+      parentKey="cat_pid"
+      >
+
+      </el-table-tree-column>
+        <!-- <el-table-column
           prop="cat_name"
           label="分类名称"
           >
-        </el-table-column>
+        </el-table-column> -->
         <el-table-column
           label="级别"
           width="50">
@@ -69,7 +85,13 @@
 </template>
 
 <script>
+// 导入局部组件
+import ElementTreegrid from 'element-tree-grid';
+
 export default {
+  components: {
+    'el-table-tree-column': ElementTreegrid
+  },
   data() {
     return {
       data: [],
