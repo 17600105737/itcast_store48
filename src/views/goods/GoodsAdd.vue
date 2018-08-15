@@ -2,6 +2,7 @@
   <el-card class="card">
     <!-- 面包屑 -->
     <my-breadcrumb class="bread" level1="商品管理" level2="商品列表"></my-breadcrumb>
+
     <!-- 消息提示 -->
     <el-alert
       class="alert"
@@ -10,6 +11,7 @@
       center
       show-icon>
     </el-alert>
+
     <!-- 步骤条 -->
     <el-steps :active="activeName - 0" finish-status="success" align-center>
       <el-step name="1" title="基本信息"></el-step>
@@ -18,22 +20,87 @@
       <el-step title="商品图片"></el-step>
       <el-step title="商品内容"></el-step>
     </el-steps>
+
     <!-- 标签页 -->
-    <el-tabs v-model="activeName" class="tabs" tab-position="left" style="height: 200px;">
-      <el-tab-pane name="0" label="基本信息">基本信息</el-tab-pane>
-      <el-tab-pane name="1" label="商品参数">商品参数</el-tab-pane>
-      <el-tab-pane name="2" label="商品属性">商品属性</el-tab-pane>
-      <el-tab-pane name="3" label="商品图片">商品图片</el-tab-pane>
-      <el-tab-pane name="4" label="商品内容">商品内容</el-tab-pane>
-    </el-tabs>
+    <el-form
+      :model="form">
+      <el-tabs
+        @tab-click="handleTabClick"
+        v-model="activeName"
+        class="tabs"
+        tab-position="left">
+        <el-tab-pane name="0" label="基本信息">
+          <el-form-item label="商品名称">
+            <el-input v-model="form.goods_name"></el-input>
+          </el-form-item>
+          <el-form-item label="商品价格">
+            <el-input v-model="form.goods_price"></el-input>
+          </el-form-item>
+          <el-form-item label="商品重量">
+            <el-input v-model="form.goods_weight"></el-input>
+          </el-form-item>
+          <el-form-item label="商品数量">
+            <el-input v-model="form.goods_number"></el-input>
+          </el-form-item>
+          <el-form-item label="商品分类">
+            <el-cascader
+              clearable
+              placeholder="请选择商品分类"
+              expand-trigger="hover"
+              :options="options"
+              :props="{ label: 'cat_name', value: 'cat_id', children: 'children'}"
+              v-model="selectedOptions2"
+              @change="handleChange">
+            </el-cascader>
+          </el-form-item>
+        </el-tab-pane>
+        <el-tab-pane name="1" label="商品参数">商品参数</el-tab-pane>
+        <el-tab-pane name="2" label="商品属性">商品属性</el-tab-pane>
+        <el-tab-pane name="3" label="商品图片">商品图片</el-tab-pane>
+        <el-tab-pane name="4" label="商品内容">商品内容</el-tab-pane>
+      </el-tabs>
+    </el-form>
   </el-card>
 </template>
 
 <script>
 export default {
+  created() {
+    this.loadOptions();
+  },
   data() {
     return {
-      activeName: '0'
+      activeName: '0',
+      form: {
+        goods_name: '',
+        goods_price: '',
+        goods_weight: '',
+        goods_number: '',
+      },
+      options: [],
+      selectedOptions2: []
+    }
+  },
+  methods: {
+    async loadOptions() {
+      const response = await this.$http.get('categories?type=3');
+      this.options = response.data.data;
+    },
+    // 点击tab选项卡时执行的操作
+    handleTabClick(tab,event) {
+      if (tab.index === '1' || tab.index === '2') {
+        if (this.selectedOptions2.length !== 3) {
+          this.$message.error('请先选择商品分类');
+          return;
+        }
+      }
+    },
+    // 点击级联列表时执行的函数
+    handleChange() {
+      if (this.selectedOptions2.length !== 3) {
+        this.$message.warning('请选择三级分类');
+        this.selectedOptions2.length=0;
+      }
     }
   }
 }
