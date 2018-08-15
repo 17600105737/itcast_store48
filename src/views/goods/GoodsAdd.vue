@@ -23,6 +23,7 @@
 
     <!-- 标签页 -->
     <el-form
+      label-position="top"
       :model="form">
       <el-tabs
         @tab-click="handleTabClick"
@@ -54,7 +55,25 @@
             </el-cascader>
           </el-form-item>
         </el-tab-pane>
-        <el-tab-pane name="1" label="商品参数">商品参数</el-tab-pane>
+
+        <el-tab-pane name="1" label="商品参数">
+          <el-form-item
+            v-for="item in dynamicParams"
+            :key="item.attr_id"
+            :label="item.attr_name"
+            >
+            <el-checkbox
+              checked
+              v-for="param in item.params"
+              :key="param"
+              border
+              :label="param"
+              >
+
+            </el-checkbox>
+          </el-form-item>
+        </el-tab-pane>
+
         <el-tab-pane name="2" label="商品属性">商品属性</el-tab-pane>
         <el-tab-pane name="3" label="商品图片">商品图片</el-tab-pane>
         <el-tab-pane name="4" label="商品内容">商品内容</el-tab-pane>
@@ -78,21 +97,37 @@ export default {
         goods_number: '',
       },
       options: [],
-      selectedOptions2: []
+      selectedOptions2: [],
+      // 动态参数列表
+      dynamicParams: []
     }
   },
   methods: {
+    // 获取三级列表数据
     async loadOptions() {
       const response = await this.$http.get('categories?type=3');
       this.options = response.data.data;
     },
+    async loadParams() {
+      const response = await this.$http.get(`categories/${this.selectedOptions2[2]}/attributes?sel=many`);
+      this.dynamicParams = response.data.data;
+      
+      // 获取动态参数里的选项
+      this.dynamicParams.map((item)=>{
+        item.params = item.attr_vals.length===0 ? []:item.attr_vals.split(',');
+      });
+    },
     // 点击tab选项卡时执行的操作
     handleTabClick(tab,event) {
       if (tab.index === '1' || tab.index === '2') {
+        
         if (this.selectedOptions2.length !== 3) {
+          // 没有选择三级列表
           this.$message.error('请先选择商品分类');
           return;
         }
+        // 加载动态参数
+        this.loadParams();
       }
     },
     // 点击级联列表时执行的函数
